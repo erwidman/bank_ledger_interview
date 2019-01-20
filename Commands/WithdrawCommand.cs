@@ -33,7 +33,7 @@ namespace Ledger
                 if (success && Math.Abs(previousAmt - amt - newAmt) < Command.EPSILON)
                 {
                     state.phase = "WITHDRAWAL_SUCCESS";
-                    Console.WriteLine("Old balance: ${0:2F}\nNew balance: ${1:F2}", previousAmt, newAmt);
+                    Console.WriteLine("Old balance: ${0:F2}\nNew balance: ${1:F2}", previousAmt, newAmt);
                 }
                 else
                     state.phase = "WITHDRAWAL_FAILED";

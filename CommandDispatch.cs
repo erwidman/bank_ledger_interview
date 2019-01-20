@@ -35,7 +35,7 @@ class CommandDispatch
     public CommandDispatch()
     {
 
-        //specifies that regex obj's should ignore case, and be compiled for faster processing.
+        //regex obj's should ignore case and be compiled for faster processing
         RegexOptions tmpOption = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline;
 
     
@@ -103,15 +103,27 @@ class CommandDispatch
 
     /*
      * Description:
-     *      Called in the main program loop – is responisble for testing the current user input against     
+     *      Called in the main program loop – is responsible for testing the current user input against regex
+     *      in commandRouter.
+     * Params:
+     *      string input -
+     *          The input of the user.
+     *      LedgerState state-
+     *          The LedgerState the command should operate on.
+     *      DatabaseClient dbCleint -
+     *          The db client the command should utilize.
+     * Return:
+     *      void    
      * 
      */    
     public void DispatchCommand(string input,LedgerState state, DatabaseClient dbClient)
     {
         bool isMatch = false;
+        //iterate through each regex and test against input
         foreach(Tuple<Regex,Command> router in commandRouter)
         {
             MatchCollection tmp = router.Item1.Matches(input);
+            //if the regex creates a match, collect arguments and invoke associated command.
             if (tmp.Count > 0)
             {
                 List<string> args = CollectCommandArguments(tmp[0]);
@@ -120,6 +132,7 @@ class CommandDispatch
                 break;
             }
         }
+        //if there is not match, set the LedgerState to FAIL indicating incorrect input.
         if (!isMatch)
             state.phase = "FAIL";
     }

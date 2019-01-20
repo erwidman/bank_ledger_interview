@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*
+ * Author : Eric Richard Widmann
+ * Date   : 1/18/2019
+ * Description :
+ *      Abstract class for all command types. Also contains static utilities used by several command variations.
+ * 
+ */
+using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
@@ -8,7 +15,7 @@ namespace Ledger
     {
         public abstract LedgerState Invoke(string [] args,LedgerState previous,DatabaseClient client);
 
-    
+        //Allowed threshold for comparisons involving floating point 
         public static readonly float EPSILON = .005f;
         public static readonly float MAX_TRANSACTION = 1000000000;
 
