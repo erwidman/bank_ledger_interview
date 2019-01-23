@@ -9,6 +9,7 @@
  *      distribution. This should suffice for the exercise however.
  */
 using System;
+using System.Text;
 using ArtisanCode.SimpleAesEncryption;
 namespace Ledger.Security
 {
@@ -32,19 +33,20 @@ namespace Ledger.Security
         }
         /*
         * Description:
-        *      Decrypts and input cyphertext.
+        *      Decrypts the input cyphertext.
         * Params:
         *      string input-
         *           The cyphertext to be decrypted.
         * Return:
         *       The decrypted cyphertext.
         *
-        *
         */
         public static  string Decrypt(string input)
         {
             return _decrypt.Decrypt(input);
         }
+
+    
 
     }
 }

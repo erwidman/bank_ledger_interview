@@ -10,7 +10,21 @@ namespace Ledger
         }
 
 
-   
+
+        private void ExecuteCommand(int id, float amt, DatabaseClient client)
+        {
+            Console.WriteLine(amt);
+            MySqlCommand cmd = Command.BindStmt(
+              new string[] { "@id", "@amt" },
+              new object[] { id, amt },
+              "call deposit(@id,@amt)"
+            );
+            client.Execute(cmd);
+
+        }
+
+ 
+
 
         private void AttemptDeposit(float amt,LedgerState state, DatabaseClient client)
         {
@@ -18,14 +32,9 @@ namespace Ledger
             if (!client.Connect(state))
                 return;
             float previousAmt = Command.GetAmount(state.CurrUser, client);
-            MySqlCommand cmd = Command.BindStmt(
-                new string [] {"@id","@amt"},
-                new object [] {state.CurrUser,amt},
-                "call deposit(@id,@amt)"
-            );
-            bool success = client.Execute(cmd);
+            ExecuteCommand(state.CurrUser, amt, client);
             float newAmt = Command.GetAmount(state.CurrUser, client);
-            if (success && Math.Abs(newAmt - previousAmt - amt) < Command.EPSILON)
+            if (Command.CompareAmount(previousAmt,newAmt,amt))
             {
                 state.phase = "DEPOSIT_SUCCESS";
                 Console.WriteLine("Old Balance : ${0:F2}\nNew Balance : ${1:F2}",previousAmt,newAmt);
@@ -36,6 +45,16 @@ namespace Ledger
             client.Close();
 
         }
+
+        public bool Deposit(int id, float amt, DatabaseClient client)
+        {
+            //float previousAmt = Command.GetAmount(id, client);
+            ExecuteCommand(id, amt, client);
+            //float newAmt = Command.GetAmount(id, client);
+            return true;
+         
+        }
+
 
 
 

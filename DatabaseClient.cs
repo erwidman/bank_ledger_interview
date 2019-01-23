@@ -29,6 +29,28 @@ namespace Ledger
          */        
         public Boolean Connect(LedgerState state)
         {
+         
+            Boolean success = true;
+            //if the conn already exist, return true
+            if (!(conn is null) && conn.State==System.Data.ConnectionState.Open)
+                return success;
+            try
+            {
+                if(conn is null)
+                    conn = new MySqlConnection(Encryptor.Decrypt(connectionString));
+                conn.Open();
+            }
+            catch (MySqlException e)
+            {
+                success = false;
+                Console.WriteLine(e.ToString());
+            }
+            if(!success)
+                state.phase = "NO_CONNECTION";
+            return success;
+        }
+        public Boolean Connect()
+        {
             Boolean success = true;
             //if the conn already exist, return true
             if (!(conn is null))
@@ -43,10 +65,6 @@ namespace Ledger
                 success = false;
                 Console.WriteLine(e.ToString());
             }
-            if (success)
-                Console.WriteLine("+++++Successfully connected to DB!");
-            else
-                state.phase = "NO_CONNECTION";
             return success;
         }
 
@@ -63,12 +81,11 @@ namespace Ledger
 
             Boolean success = true;
             //if connection does not exist, return true
-            if (conn is null)
+            if (conn is null || conn.State == System.Data.ConnectionState.Closed)
                 return success;
             try
             {
                 conn.Close();
-                conn = null;
             }
             catch (MySqlException e)
             {
@@ -91,7 +108,7 @@ namespace Ledger
          */
         public Boolean Execute(MySqlCommand cmd)
         {
-            if (conn is null)
+            if (conn is null || conn.State== System.Data.ConnectionState.Closed)
                 return false;
             Boolean success = true;
 
@@ -121,7 +138,7 @@ namespace Ledger
          */
         public MySqlDataReader SelectQuery(MySqlCommand cmd)
         {
-            if (conn is null)
+            if (conn is null || conn.State == System.Data.ConnectionState.Closed)
                 return null;
 
             MySqlDataReader rdr = null;

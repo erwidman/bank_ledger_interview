@@ -1,0 +1,36 @@
+{
+  "name": "Bank_Ledger_Web_UI",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "buildDev": "webpack --mode development",
+    "buildProd": "webpack --mode production",
+    "style": "browser-sync start -s -f public/**/* --no-notify"
+  },
+  "keywords": [],
+  "author": "Eric Richard Widmann",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "browser-sync": "^2.26.3",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "react-hot-loader": "^4.6.3",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "axios": "^0.18.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-pose": "^4.0.6",
+    "validator": "^10.11.0"
+  }
+}

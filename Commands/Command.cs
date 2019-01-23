@@ -16,8 +16,8 @@ namespace Ledger
         public abstract LedgerState Invoke(string [] args,LedgerState previous,DatabaseClient client);
 
         //Allowed threshold for comparisons involving floating point 
-        public static readonly float EPSILON = .005f;
-        public static readonly float MAX_TRANSACTION = 1000000000;
+        public static readonly float EPSILON = .008f;
+        public static readonly float MAX_TRANSACTION = 10000000;
 
         public static MySqlCommand BindStmt(string [] fields, object [] values,string stmt)
         {
@@ -83,6 +83,26 @@ namespace Ledger
             return amt;
         }
 
+        public static float ParseAmount(string amount)
+        {
+
+            float amt = -1;
+
+            if (amount.Length > 0)
+            {
+                bool success = float.TryParse(amount, out amt);
+                if (!success || amt > MAX_TRANSACTION)
+                    amt = -1;
+
+            };
+            return amt;
+        }
+
+        public static bool CompareAmount(float previousAmt, float newAmt, float amt)
+        {
+            return newAmt >= 0 && previousAmt >= 0 && Math.Abs(previousAmt - amt - newAmt) < EPSILON;
+        }
+
         public static float GetAmount(int id, DatabaseClient client)
         {
             MySqlCommand cmd = Command.BindStmt(
@@ -100,6 +120,25 @@ namespace Ledger
                 return tmp;
             }
 
+            return -1;
+        }
+
+        public static int GetUID(string username, DatabaseClient client)
+        {
+            MySqlCommand cmd = Command.BindStmt(
+                    new string[] { "@uname" },
+                    new string[] { username },
+                    "select id from Account where uname=@uname"
+
+                );
+            MySqlDataReader rdr = client.SelectQuery(cmd);
+            if (!(rdr is null) && rdr.Read())
+            {
+                int tmp = rdr.GetInt32(0);
+                rdr.Close();
+                return tmp;
+
+            }
             return -1;
         }
     }

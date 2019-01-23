@@ -2,7 +2,7 @@
  * Author : Eric Richard Widmann
  * Date   : 1/18/2019
  * Description :
- *      Singelton used to parse user input and invoke associated commands.
+ *      Singleton used to parse user input and invoke associated commands.
  * 
  */
 using System;
@@ -41,39 +41,39 @@ class CommandDispatch
     
         commandRouter = new Tuple<Regex, Command>[]{
             new Tuple<Regex, Command>(
-                    new Regex(@"\blogin\b\s+(.*?)$",tmpOption), 
+                    new Regex(@"^login\b\s+(.*?)$",tmpOption), 
                     new LoginCommand()
                 ),
             new Tuple<Regex, Command>(
-                    new Regex(@"\bhelp\b\s*$",tmpOption),
+                    new Regex(@"^help\b\s*$",tmpOption),
                     new HelpCommand()
                 ),
             new Tuple<Regex, Command>(
-                    new Regex(@"\bdeposit\b\s*?([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
+                    new Regex(@"^deposit\b\s*?([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
                     new DepositCommand()
                 ),
             new Tuple<Regex, Command>(
-                    new Regex(@"\bcreate\b\s\baccount\b\s+(.*)$",tmpOption),
+                    new Regex(@"^create\b\s\baccount\b\s+(.*)$",tmpOption),
                     new CreateAccountCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"\bwithdrawal\b\s*?([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
+                    new Regex(@"^withdraw\b\s*([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
                     new WithdrawCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"\bquit\b\s*",tmpOption),
+                    new Regex(@"^quit\b\s*",tmpOption),
                     new QuitCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"\bbalance\b\s*",tmpOption),
+                    new Regex(@"^balance\b\s*$",tmpOption),
                     new BalanceCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"\bhistory\b\s*",tmpOption),
+                    new Regex(@"^\bhistory\b\s*$",tmpOption),
                     new HistoryCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"\blogout\b\s*",tmpOption),
+                    new Regex(@"\blogout\b\s*$",tmpOption),
                     new LogoutCommand()
                 ),
 

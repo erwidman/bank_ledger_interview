@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-
+using Newtonsoft.Json;
 namespace Ledger
 {
     public class HistoryCommand : Command
@@ -25,6 +26,52 @@ namespace Ledger
             rdr.Close();
         }
 
+        private MySqlDataReader ExecuteQuery(int uid,DatabaseClient client)
+        {
+            MySqlCommand cmd = Command.BindStmt(
+                    new string[] { "@id" },
+                    new object[] { uid },
+                    "select action, delta, time from History where id=@id and display=1 order by actionID desc limit 100"
+               );
+            return client.SelectQuery(cmd);
+        }
+
+
+
+        private class History
+        {
+            public string action;
+            public float delta;
+            public string time;
+            public History(string action, float delta, string time)
+            {
+                this.action = action;
+                this.delta = delta;
+                this.time = time;
+            }
+        }
+        public string GetHistory(int uid, DatabaseClient client)
+        {
+          
+            MySqlDataReader rdr = ExecuteQuery(uid, client);
+            if (rdr is null)
+                return null;
+            else
+            {
+                List<History> buffer = new List<History>();
+                while (rdr.Read())
+                {
+                    string action = rdr.GetString(0);
+                    string time = rdr.GetString(2);
+                    float delta = rdr.GetFloat(1);
+                    buffer.Add(new History(action, delta, time));
+                }
+
+                Dictionary<string, List<History>> final = new Dictionary<string, List<History>>();
+                final.Add("data", buffer);
+                return JsonConvert.SerializeObject(final);
+            }
+        }
 
         public override LedgerState Invoke(string[] args, LedgerState previous, DatabaseClient client)
         {
@@ -34,13 +81,9 @@ namespace Ledger
             {
                 if (!client.Connect(previous))
                     return previous;
-                MySqlCommand cmd = Command.BindStmt(
-                     new string [] {"@id"},
-                     new object [] {previous.CurrUser},
-                     "select action, delta, time from History where id=@id and display=1 order by actionID desc limit 100"
-                );
+               
                 float currAmt = Command.GetAmount(previous.CurrUser, client);
-                MySqlDataReader rdr = client.SelectQuery(cmd);
+                MySqlDataReader rdr = ExecuteQuery(previous.CurrUser, client);
                 if (!(rdr is null))
                 {
                     Console.WriteLine("|Current Balance : ${0:F2}", currAmt);

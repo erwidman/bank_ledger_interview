@@ -31,7 +31,7 @@ namespace Ledger
                 string readPassword = rdr.GetString(0);
                 int success = rdr.GetInt32(1);
                 rdr.Close();
-                if (comparePasswords(pass,readPassword))
+                if (ComparePasswords(pass,readPassword))
                 { 
                     Console.WriteLine(success);
                     return success;
@@ -44,7 +44,7 @@ namespace Ledger
 
         }
 
-        private bool comparePasswords(string pass, string readPassword)
+        private bool ComparePasswords(string pass, string readPassword)
         {
             return Encryptor.Decrypt(readPassword).Equals(pass);
         }

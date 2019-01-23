@@ -5,11 +5,19 @@ namespace Ledger
 {
     public class WithdrawCommand : Command
     {
-        public WithdrawCommand()
+       
+
+        private void ExecuteCommand(int uid, float amt, DatabaseClient client)
         {
+            MySqlCommand cmd = Command.BindStmt(
+                   new string[] { "@id", "@amt" },
+                   new object[] { uid, amt },
+                   "call withdrawal(@id,@amt)"
+               );
+            client.Execute(cmd);
         }
 
-
+     
 
 
         private void AttemptWithdrawal(float amt, LedgerState state, DatabaseClient client)
@@ -22,15 +30,11 @@ namespace Ledger
                 state.phase = "INSUFFICENT_FUNDS";
             else
             {
-                MySqlCommand cmd = Command.BindStmt(
-                    new string[] { "@id", "@amt" },
-                    new object[] { state.CurrUser, amt },
-                    "call withdrawal(@id,@amt)"
-                );
-                bool success = client.Execute(cmd);
+
+                ExecuteCommand(state.CurrUser, amt, client);
                 float newAmt = Command.GetAmount(state.CurrUser, client);
-                Console.WriteLine("{0} here",Math.Abs(previousAmt - amt - newAmt));
-                if (success && Math.Abs(previousAmt - amt - newAmt) < Command.EPSILON)
+
+                if (Command.CompareAmount(previousAmt,newAmt,amt))
                 {
                     state.phase = "WITHDRAWAL_SUCCESS";
                     Console.WriteLine("Old balance: ${0:F2}\nNew balance: ${1:F2}", previousAmt, newAmt);
@@ -40,7 +44,13 @@ namespace Ledger
 
             }
             client.Close();
+        }
 
+        public bool Withdraw(int id, float amt, float previousAmt, DatabaseClient client)
+        {
+            ExecuteCommand(id,amt,client);
+            //float newAmt = Command.GetAmount(id, client);
+            return true;
         }
 
         public override LedgerState Invoke(string[] args, LedgerState previous, DatabaseClient client)
