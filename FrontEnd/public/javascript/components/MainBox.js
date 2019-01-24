@@ -155,7 +155,7 @@ export default class MainBox extends Component {
                             ...this.state,
                             mainError: "",
                             currentBalance : newamt.data,
-                            mainMsg:`${pastTense} $${amt}!`,
+                            mainMsg:`${pastTense} $${amt.toFixed(2)}!`,
                             page:'main_page'
                         })
         })

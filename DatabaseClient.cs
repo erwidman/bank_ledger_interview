@@ -53,7 +53,7 @@ namespace Ledger
         {
             Boolean success = true;
             //if the conn already exist, return true
-            if (!(conn is null))
+            if (!(conn is null) && conn.State== System.Data.ConnectionState.Open)
                 return success;
             try
             {

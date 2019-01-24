@@ -32,7 +32,7 @@ namespace Ledger.WebAPI
             if (!webClient.Connect())
                 return Content(HttpStatusCode.InternalServerError, "DB_CONNECTION_FAILURE");
 
-       
+
             bool success = command.CreateAccount(splitAuth[0], splitAuth[1],webClient);
             webClient.Close();
             if (success)

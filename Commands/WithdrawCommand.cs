@@ -64,6 +64,12 @@ namespace Ledger
                 return;
             }
 
+            if (!client.Connect())
+            {
+                state.phase = "UNABLE_TO_CONNECT";
+                return;
+            }
+
             float previousAmt = Command.GetAmount(state.CurrUser, client);
      
             if (Math.Abs(previousAmt - amt)<-Command.EPSILON)

@@ -227,7 +227,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .historyTable{
-    height: 100%;
+/*    height: 100%;*/
     width: 95%;
     margin-bottom: 30px;
     margin-top: 80px;
@@ -246,6 +246,10 @@ table, th, td {
 td,th{
     width: 33%;
     text-align: center;
+    height: 30px;
+}
+
+tr{
     height: 30px;
 }
 

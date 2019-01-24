@@ -41,7 +41,7 @@ class CommandDispatch
     
         commandRouter = new Tuple<Regex, Command>[]{
             new Tuple<Regex, Command>(
-                    new Regex(@"^login\b\s+(.*?)$",tmpOption), 
+                    new Regex(@"^login\b\s+(.*?)\s*$",tmpOption), 
                     new LoginCommand()
                 ),
             new Tuple<Regex, Command>(
@@ -49,15 +49,15 @@ class CommandDispatch
                     new HelpCommand()
                 ),
             new Tuple<Regex, Command>(
-                    new Regex(@"^deposit\b\s+([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
+                    new Regex(@"^deposit\b\s+([0-9]*(\.[0-9]{1,2})?)?\s*$",tmpOption),
                     new DepositCommand()
                 ),
             new Tuple<Regex, Command>(
-                    new Regex(@"^create\b\s\baccount\b\s+(.*)$",tmpOption),
+                    new Regex(@"^create\b\s\baccount\b\s+(.*)\s*$",tmpOption),
                     new CreateAccountCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"^withdraw\b\s+([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
+                    new Regex(@"^withdraw\b\s+([0-9]*(\.[0-9]{1,2})?)?\s*$",tmpOption),
                     new WithdrawCommand()
                 ),
              new Tuple<Regex, Command>(

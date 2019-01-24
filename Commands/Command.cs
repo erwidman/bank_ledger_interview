@@ -16,7 +16,7 @@ namespace Ledger
         public abstract LedgerState Invoke(string [] args,LedgerState previous,DatabaseClient client);
 
         //Allowed threshold for comparisons involving floating point 
-        public static readonly float EPSILON = .008f;
+        public static readonly float EPSILON = .009999f;
         public static readonly float MAX_TRANSACTION = 10000000;
 
         public static MySqlCommand BindStmt(string [] fields, object [] values,string stmt)

@@ -15,7 +15,7 @@
   "FAILED_TO_CREATE_USER" :  "An error occurred. The user could not be created.",
   "INSUFFICENT_FUNDS" :  "The amount you attempted to withdrawal is greater than your balance.",
   "WITHDRAWAL_SUCCESS" :  "Thank you for your business.",
-  "WITHDRAWAL_FAILED" :  "An error occurred, your withdrawal could not be made",
+  "WITHDRAWAL_FAILED" :  "An error occurred, your withdrawal could not be made.",
   "INVALID_WITHDRAW_ARGUMENT" :  "The argument entered is invalid.",
   "BALANCE_FAIL" :  "Failed to retrieve balance.",
   "BALANCE_SUCCESS" :  "",
@@ -23,5 +23,6 @@
   "HISTORY_FAIL" :  "Failed to retrieve history.",
   "LOGOUT_SUCCESS" :  "Logged out.",
   "PASSWORD_MISMATCH" :  "The password\'s entered do not match.",
-  "INVALID_USER_OR_PASS" : "The username or password is invalid. Must be 6 to 30 alphanumeric characters."
+  "INVALID_USER_OR_PASS" : "The username or password is invalid. Must be 6 to 30 alphanumeric characters.",
+  "UNABLE_TO_CONNECT" :  "Unable to connect to storage."
 }
