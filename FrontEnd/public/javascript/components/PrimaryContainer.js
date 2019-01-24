@@ -2,7 +2,7 @@
     Author      : Eric Richard Widmann
     Date        : 1/23/2019
     Description :
-        Set's up rest api and http routing.
+        Main container of program – only component that has state. Handles all events.
 */
 import React, { Component } from 'react'
 import Rest from '../util/RestInterface.js'
@@ -62,10 +62,20 @@ const parseAmt = (amount)=>{
 
 
 
-export default class MainBox extends Component {
+export default class PrimaryContainer extends Component {
     
     constructor(props){
         super(props)
+        
+        /*
+            LoginError, createAccountError and mainError are all strings that appear
+            when some webapi failure occurs. History is an array containing objects
+            used to populate the history feature. Mainmsg contains information relating
+            to successful deposits and withdraws. Page specifies which page in the app
+            should be visible.
+
+
+        */
         this.state = {
             loginError : "",
             createAccountError: "",
@@ -83,6 +93,7 @@ export default class MainBox extends Component {
     onLogin = (e,uname,pass)=>{
         e.preventDefault();
         this.togglePage("loading");
+
         Rest.setAuth(uname,pass)
         .then(()=>Rest.getCurrentAmount())
         .then((amt)=>{
@@ -143,6 +154,7 @@ export default class MainBox extends Component {
         pass.value="";
         pass2.value ="";
     }
+
     //handles deposit and withdraw
     onAlter = (API,amount,type,pastTense,getAmount) =>{
         this.togglePage('loading')
@@ -197,7 +209,7 @@ export default class MainBox extends Component {
     }
 
 
-
+    //updates the state to the specified param page
     togglePage = (page)=>
         this.setState(
             {
@@ -208,80 +220,76 @@ export default class MainBox extends Component {
             })
 
 
-
-
-
     
 
     render() {
         return (
-            <div className="mainBox">
+        <div className="mainBox">
             {
-                MakeHideable(
-                      <LoginBox
-                        onLogin={this.onLogin}
-                        togglePage={this.togglePage}
-                        loginError={this.state.loginError}
-                     />,
-                    this.state.page,
-                    "login"
-                )
+            MakeHideable(
+                  <LoginBox
+                    onLogin={this.onLogin}
+                    togglePage={this.togglePage}
+                    loginError={this.state.loginError}
+                 />,
+                this.state.page,
+                "login"
+            )
             }
             {
-                MakeHideable(
-                    <CreateAccountForm 
-                        onCreateAccount={this.onCreateAccount}
-                        error={this.state.createAccountError}
-                        onBack={()=>this.togglePage('login')}
-                    />,
-                    this.state.page,
-                    "create_account"
-                )       
+            MakeHideable(
+                <CreateAccountForm 
+                    onCreateAccount={this.onCreateAccount}
+                    error={this.state.createAccountError}
+                    onBack={()=>this.togglePage('login')}
+                />,
+                this.state.page,
+                "create_account"
+            )       
             }
             {
-                MakeHideable(
-                    <div className="blockBox">
-                        <div className="center">Account Made</div>
-                    </div>,
-                    this.state.page,
-                    "account_created"
-                )
+            MakeHideable(
+                <div className="blockBox">
+                    <div className="center">Account Made</div>
+                </div>,
+                this.state.page,
+                "account_created"
+            )
             }
             {
-                MakeHideable(
-                    <div className="blockBox">
-                        <div className="center">Loading...</div>
-                    </div>,
-                    this.state.page,
-                    "loading"
-                )
+            MakeHideable(
+                <div className="blockBox">
+                    <div className="center">Loading...</div>
+                </div>,
+                this.state.page,
+                "loading"
+            )
             }
             {
-                MakeHideable(
-                    <MainPage 
-                        onDeposit={this.onDeposit}
-                        onWithdraw={this.onWithdraw}
-                        onHistory={this.onHistory}
-                        error={this.state.mainError}
-                        mainMsg={this.state.mainMsg}
-                        currentBalance ={this.state.currentBalance}
-                    />,
-                    this.state.page,
-                    "main_page"
-                )
+            MakeHideable(
+                <MainPage 
+                    onDeposit={this.onDeposit}
+                    onWithdraw={this.onWithdraw}
+                    onHistory={this.onHistory}
+                    error={this.state.mainError}
+                    mainMsg={this.state.mainMsg}
+                    currentBalance ={this.state.currentBalance}
+                />,
+                this.state.page,
+                "main_page"
+            )
             }
             {
-                MakeHideable(
-                    <HistoryBox 
-                        history={this.state.history} 
-                        onGoBack={()=>this.togglePage('main_page')}
-                    />,
-                    this.state.page,
-                    "history"
-                )
+            MakeHideable(
+                <HistoryBox 
+                    history={this.state.history} 
+                    onGoBack={()=>this.togglePage('main_page')}
+                />,
+                this.state.page,
+                "history"
+            )
             }
-
-            </div>
+        </div>
         );
     }
 }

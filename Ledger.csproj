@@ -118,6 +118,28 @@
     <None Include="packages.config" />
     <None Include="stateText.json" />
     <None Include="app.config" />
+    <None Include="FrontEnd\.babelrc" />
+    <None Include="FrontEnd\package-lock.json" />
+    <None Include="FrontEnd\package.json" />
+    <None Include="FrontEnd\webpack.config.js" />
+    <None Include="FrontEnd\public\index.html" />
+    <None Include="FrontEnd\public\css\main.css" />
+    <None Include="FrontEnd\public\dist\bundle.js" />
+    <None Include="FrontEnd\public\dist\bundle.js.map" />
+    <None Include="FrontEnd\public\javascript\index.js" />
+    <None Include="FrontEnd\public\javascript\animations\Animations.js" />
+    <None Include="FrontEnd\public\javascript\components\ActionBox.js" />
+    <None Include="FrontEnd\public\javascript\components\CreateAccountForm.js" />
+    <None Include="FrontEnd\public\javascript\components\HistoryBox.js" />
+    <None Include="FrontEnd\public\javascript\components\LoginBox.js" />
+    <None Include="FrontEnd\public\javascript\components\PrimaryContainer.js" />
+    <None Include="FrontEnd\public\javascript\components\MainPage.js" />
+    <None Include="FrontEnd\public\javascript\util\Constants.js" />
+    <None Include="FrontEnd\public\javascript\util\RestInterface.js" />
+    <None Include="SQL\createAccount.sql" />
+    <None Include="SQL\deposit.sql" />
+    <None Include="SQL\eer.png" />
+    <None Include="SQL\withdraw.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />

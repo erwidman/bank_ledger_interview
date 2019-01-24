@@ -2,13 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 
-import MainBox from './components/MainBox.js'
+import PrimaryContainer from './components/PrimaryContainer.js'
 window.React = React
 const {render} = ReactDOM
-const MainElement = <MainBox/>
+
 
 render(
-    MainElement,
+    <PrimaryContainer />,
     document.querySelector(".react-container")
 )
 
