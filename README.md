@@ -1,7 +1,7 @@
 # bank_ledger_interview
 
 ### Description
-The program provided is an implementation of very simple personal bank ledger. It consist of a CLI and REST API which I created with intention of experimentation (I have never created a REST API in C#). There is a very simple React frontend provided in the directory FrontEnd which can be viewed in the browser locally. If the program is run with the argument "--webapi", it will execute the REST service on port 9000 : otherwise the CLI executes. I have the service setup to use my personal dev AWS RDS MySql DB for persistent storage.
+The program provided is an implementation of a simple personal bank ledger. It consist of a CLI and REST API which I created with intention of experimentation (I have never created a REST API in C#). There is a minimalistic React frontend provided in FrontEnd/ which can be viewed in the browser locally. If the program is run with the argument "--webapi", it will execute the REST service on port 9000 : otherwise the CLI executes. I have the service setup to use my personal dev AWS RDS MySql DB for persistent storage.
 
 ### Implementation
 
