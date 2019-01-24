@@ -16,7 +16,7 @@ The CLI backend is implemented purely in C# and leans heavily on the NuGet packa
 The REST version of the backend found in Web/ is able to reuse the various implementations of Command.cs by serving essentially the same role as CommandDispather.cs decoupling request and implementation.
 
 #### Persitent-Storage______(M)
-The relational DB consist of three tables : Account, Balance, and History. Account contains an auto incremented column id which serves as foreign keys in Balance and History associating user and their columns. Additionally, there are stored procedure for withdraws, deposits, and account creation that log all interactions in the History table with the invoking users id. 
+The relational DB consist of three tables : Account, Balance, and History. Account contains an auto incremented column id which serves as foreign keys in Balance and History associating users and their columns. Additionally, there are stored procedures for withdraws, deposits, and account creation that log all interactions in the History table with the invoking users id. 
 
 
 
