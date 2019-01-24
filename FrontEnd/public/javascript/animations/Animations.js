@@ -3,7 +3,7 @@ var pageID=100000
 
 const Hideable = posed.div({
     visible : { opacity : 1},
-    hidden : {opacity : 0,display:'hidden'}
+    hidden : {opacity : 0}
 });
 
 
@@ -17,7 +17,7 @@ const MakeHideable = (ele,currentPage,expectedPage)=>{
             currentPage==expectedPage ?
              {zIndex:1000}
              :
-             {zIndex:-1000}
+             {zIndex:-1000,display:'none'}
             
         }  
             pose={currentPage==expectedPage ? 'visible' : 'hidden'}>

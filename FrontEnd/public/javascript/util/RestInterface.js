@@ -30,12 +30,12 @@ const setAuth = (username,password)=>{
     });
 };
 
-const logout = ()=>{
-    if(!auth)
-        return false;
-    auth = null;
-    return true;
-}
+// const logout = ()=>{
+//     if(!auth)
+//         return false;
+//     auth = null;
+//     return true;
+// }
 
 
 const alter = (type,amt)=>{
@@ -73,17 +73,16 @@ const withdraw = (amt)=>{
 
 const getHistory = ()=>{
     if(!auth)
-        return "noAuth";
-    axios.post(
+        throw new Error('noAuth')
+    return axios.post(
         `${endpoint}/api/History`,
         {},{auth}
     )
-    .then((data)=>{
-        console.log(JSON.parse((data.data)));
-    });
 }
 
 const getCurrentAmount = ()=>{
+    if(!auth)
+        throw new Error('noAuth')
     return axios.post(
         `${endpoint}/api/CurrentAmount`,
         {},{auth}

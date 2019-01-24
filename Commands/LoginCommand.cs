@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Implementation of |Login <username>| command.
+*/
+using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Ledger.Security;
@@ -7,15 +13,21 @@ namespace Ledger
 {
     public class LoginCommand : Command
     {
-        public LoginCommand()
-        {
 
-   
-        }
+        /*
+            Description:
+                Helper function utilized by invoke to login.
+            Params:
+                string uname - 
+                    Username of login attempt.
+                string pass-
+                    Unencrypted password to compare against cyphertext.
+                DatabaseClient client -
+                    Client which will perform the query.
+            Return:
+                Id of user if successful, or -1.
 
-
-
-
+        */
         private int AttemptLogin(string uname, string pass,DatabaseClient client)
         {
             
@@ -26,16 +38,14 @@ namespace Ledger
                     "select password,id from Account where uname=@uname"
                 );
             MySqlDataReader rdr =  client.SelectQuery(cmd);
+            //if query was successful
             if(!(rdr is null) && rdr.Read())
             {
                 string readPassword = rdr.GetString(0);
-                int success = rdr.GetInt32(1);
+                int id = rdr.GetInt32(1);
                 rdr.Close();
                 if (ComparePasswords(pass,readPassword))
-                { 
-                    Console.WriteLine(success);
-                    return success;
-                }
+                    return id;
 
             }
 
@@ -44,18 +54,29 @@ namespace Ledger
 
         }
 
+        /*
+            Description:
+                Function used to compare unencryped password against cyphertext from DB
+            Params:
+                string pass-
+                    Plaintext password inputed
+                string readPassword - 
+                    Cyphertext password from DB.
+        */
         private bool ComparePasswords(string pass, string readPassword)
         {
             return Encryptor.Decrypt(readPassword).Equals(pass);
         }
 
-        public override LedgerState Invoke(string [] args,LedgerState previous, DatabaseClient client)
+        //See Command.cs
+        public override LedgerState Invoke(string [] args,LedgerState state, DatabaseClient client)
         {
 
-            if (previous.CurrUser >= 0)
+            //user already logged in
+            if (state.CurrUser >= 0)
             {
-                previous.phase="ALREADY_LOGGED";
-                return previous;
+                state.phase="ALREADY_LOGGED";
+                return state;
             }
 
 
@@ -63,27 +84,31 @@ namespace Ledger
             if (args[1].Length>0)
                 uname = args[1];
             else if (args[1].Length==0)
-                previous.phase = "NO_USER_NAME";
+                state.phase = "NO_USER_NAME";
             if(!(uname is null))
             {
-                if (!client.Connect(previous))
-                    return previous;
+                // client cannot connect
+                if (!client.Connect(state))
+                {
+                    state.phase = "UNABLE_TO_CONNECT";
+                    return state;
+                }
 
                 string pass = Command.CollectPassword();
 
                 int uid = AttemptLogin(uname, pass, client);
                 if (uid < 0)
-                    previous.phase = "LOGIN_FAIL";
+                    state.phase = "LOGIN_FAIL";
                 else
                 {
-                    previous.phase = "LOGIN_SUCCESS";
-                    previous.Login(uid, uname);
+                    state.phase = "LOGIN_SUCCESS";
+                    state.Login(uid, uname);
                 }
             }
 
             client.Close();
 
-            return previous;
+            return state;
             
         }
     }

@@ -1,15 +1,17 @@
-﻿using System;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Implementation of |quit| command.
+*/
+using System;
 namespace Ledger
 {
     public class QuitCommand : Command
     {
-        public QuitCommand()
-        {
-        }
-
+        //See commandCS
         public override LedgerState Invoke(string[] args, LedgerState previous, DatabaseClient client)
         {
-            client.Close();
             previous.Alive = false;
             return previous;
            

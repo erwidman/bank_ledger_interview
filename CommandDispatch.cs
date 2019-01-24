@@ -49,7 +49,7 @@ class CommandDispatch
                     new HelpCommand()
                 ),
             new Tuple<Regex, Command>(
-                    new Regex(@"^deposit\b\s*?([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
+                    new Regex(@"^deposit\b\s+([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
                     new DepositCommand()
                 ),
             new Tuple<Regex, Command>(
@@ -57,7 +57,7 @@ class CommandDispatch
                     new CreateAccountCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"^withdraw\b\s*([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
+                    new Regex(@"^withdraw\b\s+([0-9]*(\.[0-9]{1,2})?)?$",tmpOption),
                     new WithdrawCommand()
                 ),
              new Tuple<Regex, Command>(
@@ -69,7 +69,7 @@ class CommandDispatch
                     new BalanceCommand()
                 ),
              new Tuple<Regex, Command>(
-                    new Regex(@"^\bhistory\b\s*$",tmpOption),
+                    new Regex(@"^history\b\s*$",tmpOption),
                     new HistoryCommand()
                 ),
              new Tuple<Regex, Command>(

@@ -1,3 +1,9 @@
+/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Set's up rest api and http routing.
+*/
 import React, { Component } from 'react'
 import Rest from '../util/RestInterface.js'
 import validator from 'validator'
@@ -5,15 +11,46 @@ import validator from 'validator'
 import LoginBox from './LoginBox.js'
 import CreateAccountForm from './CreateAccountForm.js'
 import MainPage from './MainPage.js'
+import HistoryBox from './HistoryBox.js'
 import {MakeHideable} from '../animations/Animations.js'
 
 
+/*
+    Description:
+        Validates username is 6 to 30 alphanumeric chars
+    Params:
+        string uname -
+            The username to validate.
+    Return :
+        True if valid.
+
+*/
 const validateUsername = (uname)=>
-    validator.isAlphanumeric(uname) && uname.length >= 6
+    validator.isAlphanumeric(uname) && uname.length >= 6 && uname.length<=30
 
+/*
+    Description:
+        Validates password is 6 to 30 alphanumeric chars and matches second input
+    Params:
+        string pass && pass1 -
+            The password to validate
+    Return :
+        True if valid.
+
+*/
 const validatePassword = (pass,pass1)=>
-    validator.isAlphanumeric(pass) && validator.isAlphanumeric(pass1) && pass === pass1 && pass.length >= 6
+    validator.isAlphanumeric(pass) && validator.isAlphanumeric(pass1) && pass === pass1 && pass.length >= 6 && pass.length<=30
 
+/*
+    Description:
+        Validates username is 6 to 30 alphanumeric chars
+    Params:
+        string uname -
+            The username to validate.
+    Return :
+        
+
+*/
 const parseAmt = (amount)=>{
     let amt = amount.value
     amt = Number(amt)
@@ -35,10 +72,12 @@ export default class MainBox extends Component {
             page : "login",
             mainError : "",
             mainMsg : "",
-            currentBalance : 0
+            currentBalance : 0,
+            history : []
         }   
     }
 
+    //handles login form submission
     onLogin = (e,uname,pass)=>{
         e.preventDefault();
         this.togglePage("loading");
@@ -64,6 +103,7 @@ export default class MainBox extends Component {
         })
     }
 
+    //handles account creation
     onCreateAccount = (e,uname,pass,pass2)=>{
         e.preventDefault()
         let userValid = validateUsername(uname.value)
@@ -71,17 +111,20 @@ export default class MainBox extends Component {
         if(userValid && passValid){
             this.togglePage('loading');
             Rest.createAccount(uname.value,pass.value)
-            .then((pass)=>{
+            .then((passSubmit)=>{
 
-                if(pass){
+                if(passSubmit){
                     this.togglePage('account_created');
                 setTimeout(()=>this.togglePage('login'),2000);
                 }
                 uname.value = "";
-                pass.value = "";
+                pass2.value = "";
+                pass.value="";
             })
             .catch((err)=>{
-                this.setState({...this.state,createAccountError:"Username taken or offline."});
+                console.error(err)
+                console.log("here");
+                this.setState({...this.state,page:"create_account",createAccountError:"Username taken or offline."});
             })
            
         }
@@ -96,10 +139,15 @@ export default class MainBox extends Component {
         pass.value="";
         pass2.value ="";
     }
-
+    //handles deposit and withdraw
     onAlter = (API,amount,type,pastTense,getAmount) =>{
         this.togglePage('loading')
+
         let amt= parseAmt(amount);
+        amount.value = null
+
+
+
         API(amt)
         .then(()=>getAmount())
         .then((newamt)=>{
@@ -114,25 +162,37 @@ export default class MainBox extends Component {
         .catch((err)=>{
             this.setState({
                             ...this.state,
-                            mainError:`${type} Failed!`,
+                            mainMsg:`${type} Failed!`,
                             page : "main_page"
                         })
         });
         amount.val="";
 
     }
-
+    
     onWithdraw = (e,amount) =>{
         e.preventDefault()
         this.onAlter(Rest.withdraw,amount,"Withdraw","Withdrew",Rest.getCurrentAmount)
-        amount.value = ""
 
     }
     onDeposit = (e,amount) =>{
         e.preventDefault()
         this.onAlter(Rest.deposit,amount,"Deposit","Deposited",Rest.getCurrentAmount)
-        amount.value=""
     }
+
+    //handles history button
+    onHistory = () =>{
+        this.togglePage('loading')
+        Rest.getHistory()
+        .then((response)=>{
+            let history = JSON.parse(response.data);
+            this.setState({...this.state,page:'history',history:history.data})
+        })
+        .catch(()=>this.setState({...this.state,page:"main_page",mainMsg:"Get History Failed!"})
+        );
+    }
+
+
 
     togglePage = (page)=>
         this.setState(
@@ -165,6 +225,7 @@ export default class MainBox extends Component {
                     <CreateAccountForm 
                         onCreateAccount={this.onCreateAccount}
                         error={this.state.createAccountError}
+                        onBack={()=>this.togglePage('login')}
                     />,
                     this.state.page,
                     "create_account"
@@ -190,10 +251,10 @@ export default class MainBox extends Component {
             }
             {
                 MakeHideable(
-                    
                     <MainPage 
                         onDeposit={this.onDeposit}
                         onWithdraw={this.onWithdraw}
+                        onHistory={this.onHistory}
                         error={this.state.mainError}
                         mainMsg={this.state.mainMsg}
                         currentBalance ={this.state.currentBalance}
@@ -202,6 +263,17 @@ export default class MainBox extends Component {
                     "main_page"
                 )
             }
+            {
+                MakeHideable(
+                    <HistoryBox 
+                        history={this.state.history} 
+                        onGoBack={()=>this.togglePage('main_page')}
+                    />,
+                    this.state.page,
+                    "history"
+                )
+            }
+
             </div>
         );
     }

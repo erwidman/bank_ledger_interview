@@ -1,4 +1,10 @@
-﻿using System.Web.Http;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Handles post calls to /api/History
+*/
+using System.Web.Http;
 using System.Net.Http;
 using System.Web.Http.Cors;
 
@@ -11,7 +17,10 @@ namespace Ledger.WebAPI
         {
             DatabaseClient client = new DatabaseClient();
             HistoryCommand command = new HistoryCommand();
-            client.Connect();
+            if (!client.Connect())
+                return Content(System.Net.HttpStatusCode.InternalServerError, "DB_CONNECTION_FAILURE");
+
+            //verify auth and user
             string auth = msg.Headers.Authorization.ToString();
             bool validAuth = WebUtil.VerifyAuth(auth, client);
             int uid = Command.GetUID(WebUtil.DecodeAuth(auth)[0], client);

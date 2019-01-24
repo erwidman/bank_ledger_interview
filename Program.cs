@@ -42,10 +42,9 @@ namespace Ledger
 
         public static void Main(string[] args)
         {
-            Console.WriteLine(args.Length);
+          
 
-           //if (args.Length >= 1 && Regex.Match(args[0], @"^--webapi$").Success)
-          if(true)
+          if (args.Length >= 1 && Regex.Match(args[0], @"^--webapi$").Success)
             {
                 string addr = "http://localhost:9000/";
                 using (WebApp.Start(url: addr))

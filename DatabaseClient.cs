@@ -92,8 +92,8 @@ namespace Ledger
                 success = false;
                 Console.WriteLine(e.ToString());
             }
-            if (success)
-                Console.WriteLine("+++++Successfully closed DB client!");
+            //if (success)
+                //Console.WriteLine("+++++Successfully closed DB client!");
             return success;
         }
 

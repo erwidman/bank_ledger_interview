@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Handles post calls to /api/Alter.
+*/
+using System;
 using System.Linq;
 using System.Collections;
 using System.Threading.Tasks;
@@ -38,32 +44,36 @@ namespace Ledger.WebAPI
         }
 
 
-        //public IHttpActionResult Option(HttpRequestMessage msg)
-        //{
-        //    return Content(HttpStatusCode.OK, "true");
-
-        //}
 
         public async Task<IHttpActionResult> PostAsync(HttpRequestMessage msg)
          {
+            //read post body
             string json = await msg.Content.ReadAsStringAsync();
             Dictionary<string,string> data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
+            //ensure proper params
             if (!data.ContainsKey("amount") || !data.ContainsKey("action"))
                 return Content(HttpStatusCode.BadRequest, "MISSING_PARAMS");
 
             string amt = data["amount"];
             string action = data["action"];
-
             float amount = Command.ParseAmount(amt);
-            Console.WriteLine("Amount {0}",amount);
+
+            //verify amount is valid
             if (amount > Command.MAX_TRANSACTION)
-                return Content(HttpStatusCode.BadRequest, "AMOUNT_GREATER_THAN_MAX_TRANSACTION"); 
+                return Content(HttpStatusCode.BadRequest, "AMOUNT_GREATER_THAN_MAX_TRANSACTION");
+            if (amount <= 0)
+                return Content(HttpStatusCode.BadRequest, "INVALID_AMT");
 
             DatabaseClient client = new DatabaseClient();
-            string auth = msg.Headers.Authorization.ToString();
 
-            client.Connect();
+
+            //attempt db connection
+            if (!client.Connect())
+                return Content(HttpStatusCode.InternalServerError, "DB_CONNECTION_FAILURE");
+
+            //verify auth
+            string auth = msg.Headers.Authorization.ToString();
             bool validAuth = WebUtil.VerifyAuth(auth, client);
             int uid = Command.GetUID(WebUtil.DecodeAuth(auth)[0],client);
             if (!validAuth || uid < 0)
@@ -71,10 +81,9 @@ namespace Ledger.WebAPI
                 client.Close();
                 return Unauthorized();
             }
-            Console.WriteLine(action);
+        
 
             float previousAmt = Command.GetAmount(uid, client);
-            Console.WriteLine("insufficent {0}", previousAmt - amount < -Command.EPSILON);
             if (action.Equals("withdraw") && previousAmt - amount < -Command.EPSILON)
             {
                 client.Close();
@@ -83,13 +92,12 @@ namespace Ledger.WebAPI
 
             if (action.Equals("deposit") && ExecuteDeposit(uid, amount, client))
                 return Content(HttpStatusCode.OK, "DEPOSIT_COMPLETE");
-            else if(action.Equals("deposit"))
+            else if (action.Equals("deposit"))
                 return Content(HttpStatusCode.InternalServerError, "DEPOSIT_FAILED");
-
-            if (action.Equals("withdraw") && ExecuteWithdraw(uid, amount, previousAmt, client))
+            if (action.Equals("withdraw") && ExecuteWithdraw(uid, amount, previousAmt, client)) 
                 return Content(HttpStatusCode.OK, "WITHDRAW_SUCCESS");
-            else if(action.Equals("withdraw"))
-                return Content(HttpStatusCode.BadRequest, "WITHDRAW_FAILED");
+            else if (action.Equals("withdraw"))
+                return Content(HttpStatusCode.InternalServerError, "WITHDRAW_FAILED");
 
             client.Close();
             return Content(HttpStatusCode.BadRequest,"INVALID_REQUEST");

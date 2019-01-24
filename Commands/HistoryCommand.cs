@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Implementation of |history| command.
+*/
+using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -6,10 +12,16 @@ namespace Ledger
 {
     public class HistoryCommand : Command
     {
-        public HistoryCommand()
-        {
-        }
 
+        /*
+            Description:
+                Prints table of getHistory query.
+            Params:
+                MySqlDataReader rdr-
+                    Data reader returned from execution of history query.
+            Return:
+                void
+        */
         private void PrintHistory(MySqlDataReader rdr)
         {
             string action,time = null;
@@ -26,7 +38,19 @@ namespace Ledger
             rdr.Close();
         }
 
-        private MySqlDataReader ExecuteQuery(int uid,DatabaseClient client)
+        /*
+            Description:
+                Queries Database for last 100 actions of user identified by uid.
+            Params :
+                int uid -
+                    Unique identifier of user.
+                DatabaseClient client -
+                    Client which will perform the query.
+            Return:
+                A MySqlDataReader resulting from query execution.
+
+        */
+        private MySqlDataReader ExecuteGetHistory(int uid,DatabaseClient client)
         {
             MySqlCommand cmd = Command.BindStmt(
                     new string[] { "@id" },
@@ -38,6 +62,9 @@ namespace Ledger
 
 
 
+        /*
+            Used to serialize history results into JSON format
+        */
         private class History
         {
             public string action;
@@ -50,10 +77,21 @@ namespace Ledger
                 this.time = time;
             }
         }
+
+        /*  
+            Description:
+                Function used by webapi to retrieve history as a JSON string string.
+            Params:
+                int uid -
+                    Unique identifier of user.
+                DatabaseClient client -
+                    Client which will perform the query.
+
+        */
         public string GetHistory(int uid, DatabaseClient client)
         {
           
-            MySqlDataReader rdr = ExecuteQuery(uid, client);
+            MySqlDataReader rdr = ExecuteGetHistory(uid, client);
             if (rdr is null)
                 return null;
             else
@@ -73,30 +111,37 @@ namespace Ledger
             }
         }
 
-        public override LedgerState Invoke(string[] args, LedgerState previous, DatabaseClient client)
+        //see Command.cs
+        public override LedgerState Invoke(string[] args, LedgerState state, DatabaseClient client)
         {
-            if (previous.CurrUser < 0)
-                previous.phase = "NOT_LOGGED_IN";
+            //if user is not logged in
+            if (state.CurrUser < 0)
+                state.phase = "NOT_LOGGED_IN";
             else
             {
-                if (!client.Connect(previous))
-                    return previous;
-               
-                float currAmt = Command.GetAmount(previous.CurrUser, client);
-                MySqlDataReader rdr = ExecuteQuery(previous.CurrUser, client);
+                // client cannot connect
+                if (!client.Connect(state))
+                {
+                    state.phase = "UNABLE_TO_CONNECT";
+                    return state;
+                }
+                
+                
+                float currAmt = Command.GetAmount(state.CurrUser, client);
+                MySqlDataReader rdr = ExecuteGetHistory(state.CurrUser, client);
                 if (!(rdr is null))
                 {
                     Console.WriteLine("|Current Balance : ${0:F2}", currAmt);
                     PrintHistory(rdr);
-                    previous.phase = "HISTORY_SUCCESS";
+                    state.phase = "HISTORY_SUCCESS";
                 }
                 else
-                    previous.phase = "HISTORY_FAIL";
+                    state.phase = "HISTORY_FAIL";
                 client.Close();
             }
 
 
-            return previous;
+            return state;
         }
     }
 }

@@ -1,35 +1,44 @@
-﻿using System;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Implementation of |create account <username>| command.
+*/
+using System;
 namespace Ledger
 {
     public class BalanceCommand : Command
     {
-        public BalanceCommand()
+        //see Commands/Command.cs
+        public override LedgerState Invoke(string[] args, LedgerState state, DatabaseClient client)
         {
-        }
-
-        public override LedgerState Invoke(string[] args, LedgerState previous, DatabaseClient client)
-        {
-            if(previous.CurrUser == -1)
-                previous.phase = "NOT_LOGGED_IN";
+            //if a user is not logged in, set state
+            if(state.CurrUser == -1)
+                state.phase = "NOT_LOGGED_IN";
             else
             {
-                if (!client.Connect(previous))
-                    return previous;
+                //attempt connection to DB
+                if (!client.Connect(state))
+                {
+                    state.phase = "UNABLE_TO_CONNECT";
+                    return state;
+                }
 
-                float balance = Command.GetAmount(previous.CurrUser, client);
+                //get current amount
+                float balance = Command.GetAmount(state.CurrUser, client);
                 if (balance >= 0)
                 {
                     Console.WriteLine("Your balance is ${0:F2}", balance);
-                    previous.phase = "BALANCE_SUCCESS";
+                    state.phase = "BALANCE_SUCCESS";
                 }
                 else
-                    previous.phase = "BALANCE_FAIL";
+                    state.phase = "BALANCE_FAIL";
                 client.Close();
 
             }
 
 
-            return previous;
+            return state;
         
         }
     }

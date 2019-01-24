@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Author      : Eric Richard Widmann
+    Date        : 1/23/2019
+    Description :
+        Handles post calls to /api/CreateAccount.
+*/
+using System;
 using System.Linq;
 using System.Collections;
 using System.Threading.Tasks;
@@ -20,8 +26,13 @@ namespace Ledger.WebAPI
             DatabaseClient webClient = new DatabaseClient();
             CreateAccountCommand command = new CreateAccountCommand();
             string auth = msg.Headers.Authorization.ToString();
+          
             string[] splitAuth = WebUtil.DecodeAuth(auth);
-            webClient.Connect();
+
+            if (!webClient.Connect())
+                return Content(HttpStatusCode.InternalServerError, "DB_CONNECTION_FAILURE");
+
+       
             bool success = command.CreateAccount(splitAuth[0], splitAuth[1],webClient);
             webClient.Close();
             if (success)

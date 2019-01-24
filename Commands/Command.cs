@@ -68,6 +68,7 @@ namespace Ledger
                 state.phase = "NOT_LOGGED_IN";
                 return -1;
             }
+ 
 
             float amt = -1;
 
@@ -100,8 +101,9 @@ namespace Ledger
 
         public static bool CompareAmount(float previousAmt, float newAmt, float amt)
         {
-            return newAmt >= 0 && previousAmt >= 0 && Math.Abs(previousAmt - amt - newAmt) < EPSILON;
+            return newAmt >= 0 && previousAmt >= 0 && Math.Abs(newAmt - previousAmt - amt) < EPSILON;
         }
+
 
         public static float GetAmount(int id, DatabaseClient client)
         {
