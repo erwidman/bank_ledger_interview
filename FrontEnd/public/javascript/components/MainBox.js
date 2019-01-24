@@ -77,6 +77,8 @@ export default class MainBox extends Component {
         }   
     }
 
+   
+
     //handles login form submission
     onLogin = (e,uname,pass)=>{
         e.preventDefault();
@@ -102,6 +104,8 @@ export default class MainBox extends Component {
                                 loginError:"Error with service!"})
         })
     }
+
+ 
 
     //handles account creation
     onCreateAccount = (e,uname,pass,pass2)=>{
@@ -202,6 +206,9 @@ export default class MainBox extends Component {
                 createAccountError:"",
                 loginError:""
             })
+
+
+
 
 
     

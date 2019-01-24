@@ -9,7 +9,6 @@ const Hideable = posed.div({
 
 
 const MakeHideable = (ele,currentPage,expectedPage)=>{
-       
         return(
          <Hideable 
          className="page" 
