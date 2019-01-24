@@ -58,7 +58,7 @@ namespace Ledger
         {
             
             //user already logged in
-            if (state.CurrUser >= 0)
+            if (state.CurrUser < 0)
             {
                 state.phase="ALREADY_LOGGED";
                 return;
