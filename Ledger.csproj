@@ -92,9 +92,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LedgerState.cs" />
-    <Compile Include="CommandDispatch.cs" />
-    <Compile Include="DatabaseClient.cs" />
     <Compile Include="Commands\LoginCommand.cs" />
     <Compile Include="Commands\DepositCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
@@ -112,7 +109,10 @@
     <Compile Include="Web\AlterController.cs" />
     <Compile Include="Commands\CreateAccountCommand.cs" />
     <Compile Include="Web\HistoryController.cs" />
-    <Compile Include="CurrentAmountController.cs" />
+    <Compile Include="CoreObjects\LedgerState.cs" />
+    <Compile Include="CoreObjects\DatabaseClient.cs" />
+    <Compile Include="Web\CurrentAmountController.cs" />
+    <Compile Include="CoreObjects\CommandDispatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -123,6 +123,7 @@
     <Folder Include="Commands\" />
     <Folder Include="Web\" />
     <Folder Include="Utilities\" />
+    <Folder Include="CoreObjects\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
