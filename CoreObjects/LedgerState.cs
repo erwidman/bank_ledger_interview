@@ -47,8 +47,8 @@ public class LedgerState
     //When instantiated, loads stateText.json into a Dictionary for future printing.
     public LedgerState()
     {
-        string jsonString = File.ReadAllText("../../stateText.json").Replace("\"", "\'");
-        //Console.WriteLine(jsonString);
+        string path = "../../stateText.json".Replace('/', Path.DirectorySeparatorChar);
+        string jsonString = File.ReadAllText(path).Replace("\"", "\'");
         stateText = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
 
     }
